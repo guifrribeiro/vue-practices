@@ -5,10 +5,10 @@
     <input type="search" class="filtro" v-on:input="filtro = $event.target.value" placeholder="filtre por parte do título">
     
     <ul class="lista-fotos">
-      <li class="lista-fotos-item" v-for="foto in fotos">
+      <li class="lista-fotos-item" v-for="foto in fotosComFiltro">
         
         <meu-painel :titulo="foto.titulo">
-          <img class="imagem-responsiva" :src="foto.url" :alt="foto.titulo">
+          <imagem-responsiva :url="foto.url" :titulo="foto.titulo"></imagem-responsiva>
         </meu-painel>
 
       </li>
@@ -18,15 +18,29 @@
 
 <script>
 import Painel from './components/shared/painel/Painel.vue'
+import ImagemResponsiva from './components/shared/imagem-responsiva/ImagemResponsiva.vue'
+
 export default {
   components: {
-    'meu-painel': Painel
+    'meu-painel': Painel,
+    'imagem-responsiva': ImagemResponsiva
   },
   data() {
     return {
       titulo: 'AluraPic',
       fotos: [],
       filtro: ''
+    }
+  },
+  computed: {
+    fotosComFiltro() {
+      if (this.filtro) {
+        let exp = new RegExp(this.filtro.trim(), 'i');
+        return this.fotos.filter(foto => exp.test(foto.titulo));
+      }
+      else {
+        return this.fotos;
+      }
     }
   },
   created() {
@@ -72,10 +86,6 @@ export default {
 
   .lista-fotos .lista-fotos-item {
     display: inline-block;
-  }
-
-  .imagem-responsiva {
-    width: 100%;
   }
 
   .filtro {
